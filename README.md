@@ -25,6 +25,7 @@ The implementation features RFC 8439 ChaCha20 and Poly1305 with extended 192-bit
 
 Encrypted files are structured into a deterministic binary header followed by sequential ciphertext chunks and their respective 16-byte Poly1305 MAC tags:
 
+```text
 +-----------------------------------------------------------------------+
 |  Header (40 Bytes)                                                    |
 |  - Salt:  16 Bytes (Argon2id KDF salt)                                |
@@ -38,6 +39,7 @@ Encrypted files are structured into a deterministic binary header followed by se
 +-----------------------------------------------------------------------+
 |  Final Chunk (0 to 64 KiB Payload + 16-Byte Tag with AAD final flag)  |
 +-----------------------------------------------------------------------+
+```
 
 ---
 
