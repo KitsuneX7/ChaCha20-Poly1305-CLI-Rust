@@ -67,7 +67,7 @@ impl Poly1305 {
         let p: [u128; 2] = [3, 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFB];
         if ans[0] > p[0] || (ans[0] == p[0] && ans[1] >= p[1]) {
             let (low, borrow) = ans[1].overflowing_sub(p[1]);
-            let high: u128 = ans[0] - p[0] - (if borrow { 1 } else { 0 });
+            let high: u128 = ans[0] - p[0] - borrow as u128;
             ans = [high, low];
         }
         ans
