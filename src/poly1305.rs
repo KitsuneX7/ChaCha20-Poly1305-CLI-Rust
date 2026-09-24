@@ -64,16 +64,11 @@ impl Poly1305 {
         let a_high_times_5: u128 = (ans[0] >> 2) * 5;
         ans[0] &= 0x3;
         ans = Self::add_256([0, a_high_times_5], ans);
-        let p: [u128; 2] = [3, 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFB];
-        let mut cond = false;
-        if ans[0] > p[0] { cond = true; }
-        if ans[0] == p[0] && ans[1] >= p[1] { cond = true; }
-        if cond {
-            let (low, borrow) = ans[1].overflowing_sub(p[1]);
-            let high: u128 = ans[0] - p[0] - borrow as u128;
-            ans = [high, low];
-        }
-        ans
+        let (low_sub, borrow_low) = ans[1].overflowing_sub(0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFB);
+        let (high_sub, borrow_high) = ans[0].overflowing_sub(3 + (borrow_low as u128));
+        let keep_orig = (borrow_high as u128).wrapping_neg();
+        let take_sub = !keep_orig;
+        [(ans[0] & keep_orig) | (high_sub & take_sub), (ans[1] & keep_orig) | (low_sub & take_sub)]
     }
 
     pub fn update(&mut self, data: &[u8]) {
