@@ -65,7 +65,10 @@ impl Poly1305 {
         ans[0] &= 0x3;
         ans = Self::add_256([0, a_high_times_5], ans);
         let p: [u128; 2] = [3, 0xFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFB];
-        if ans[0] > p[0] || (ans[0] == p[0] && ans[1] >= p[1]) {
+        let mut cond = false;
+        if ans[0] > p[0] { cond = true; }
+        if ans[0] == p[0] && ans[1] >= p[1] { cond = true; }
+        if cond {
             let (low, borrow) = ans[1].overflowing_sub(p[1]);
             let high: u128 = ans[0] - p[0] - borrow as u128;
             ans = [high, low];
